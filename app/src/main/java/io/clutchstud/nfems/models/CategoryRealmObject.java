@@ -8,8 +8,12 @@ import io.realm.RealmObject;
 public class CategoryRealmObject extends RealmObject {
 
 
-    private final Integer id;
-    private final String category_name;
+    private  Integer id;
+    private  String category_name;
+
+    public CategoryRealmObject() {
+
+    }
 
     public CategoryRealmObject(Category category) {
         this.id = category.getId();

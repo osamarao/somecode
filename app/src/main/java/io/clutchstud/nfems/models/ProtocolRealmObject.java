@@ -7,10 +7,14 @@ import io.realm.RealmObject;
  */
 public class ProtocolRealmObject extends RealmObject {
 
-    private final Integer id;
-    private final String htmlcontent;
-    private final String title;
-    private final Integer categoryId;
+    private  Integer id;
+    private  String htmlcontent;
+    private  String title;
+    private  Integer categoryId;
+
+    public ProtocolRealmObject() {
+
+    }
 
     public ProtocolRealmObject(Integer id, String title, String htmlcontent, Integer categoryId) {
         this.id = id;
@@ -40,5 +44,15 @@ public class ProtocolRealmObject extends RealmObject {
 
     public Integer getCategoryId() {
         return categoryId;
+    }
+
+    @Override
+    public String toString() {
+        return "ProtocolRealmObject{" +
+                "id=" + id +
+                ", htmlcontent='" + htmlcontent + '\'' +
+                ", title='" + title + '\'' +
+                ", categoryId=" + categoryId +
+                '}';
     }
 }

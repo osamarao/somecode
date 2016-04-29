@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
 import io.clutchstud.nfems.models.Category;
@@ -23,9 +25,16 @@ import retrofit2.Response;
  */
 public class SyncProtocolsService extends IntentService {
 
-    private final NFEMSService nfemsService;
-    private final RealmConfiguration realmConfiguration;
-    private final Realm realm;
+    private  NFEMSService nfemsService;
+    private  RealmConfiguration realmConfiguration;
+    private  Realm realm;
+
+
+
+    public SyncProtocolsService() {
+        super("SimpleIntentService");
+
+    }
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -34,17 +43,16 @@ public class SyncProtocolsService extends IntentService {
      */
     public SyncProtocolsService(String name) {
         super(name);
-        nfemsService = NFEMSServiceFactory.getNFEMSService();
-        realmConfiguration = new RealmConfiguration.Builder(this).build();
-        realm = Realm.getInstance(realmConfiguration);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        // TODO Ongoing Notification to show stuffs happening
 
 
+        nfemsService = NFEMSServiceFactory.getNFEMSService();
 
-        getProtocols();
+
         getCategories();
 
 
@@ -56,7 +64,8 @@ public class SyncProtocolsService extends IntentService {
             @Override
             public void onResponse(Call<ArrayList<Category>> call, Response<ArrayList<Category>> response) {
                 ArrayList<CategoryRealmObject> realmObjects = new ArrayList<CategoryRealmObject>(response.body().size());
-
+                realmConfiguration = new RealmConfiguration.Builder(SyncProtocolsService.this).build();
+                realm = Realm.getInstance(realmConfiguration);
                 for (Category category : response.body()) {
                     realmObjects.add(new CategoryRealmObject(category));
                 }
@@ -65,7 +74,7 @@ public class SyncProtocolsService extends IntentService {
                 realm.copyToRealm(realmObjects);
                 realm.commitTransaction();
 
-
+                getProtocols();
             }
 
             @Override
@@ -81,7 +90,8 @@ public class SyncProtocolsService extends IntentService {
             @Override
             public void onResponse(Call<ArrayList<Protocol>> call, Response<ArrayList<Protocol>> response) {
                 ArrayList<ProtocolRealmObject> realmObjects = new ArrayList<ProtocolRealmObject>(response.body().size());
-
+                realmConfiguration = new RealmConfiguration.Builder(SyncProtocolsService.this).build();
+                realm = Realm.getInstance(realmConfiguration);
                 for (Protocol category : response.body()) {
                     realmObjects.add(new ProtocolRealmObject(category));
                 }
@@ -90,6 +100,8 @@ public class SyncProtocolsService extends IntentService {
                 realm.copyToRealm(realmObjects);
                 realm.commitTransaction();
 
+                // use Event Bus here
+                EventBus.getDefault().post(new SyncDoneEvent("Hello everyone!"));
 
             }
 
@@ -98,5 +110,13 @@ public class SyncProtocolsService extends IntentService {
                 Log.e(this.getClass().getCanonicalName() + " getProtocols Failure", t.getMessage());
             }
         });
+    }
+
+    public class SyncDoneEvent {
+        public final String message;
+
+        public SyncDoneEvent(String message) {
+            this.message = message;
+        }
     }
 }
