@@ -1,13 +1,14 @@
 package io.clutchstud.nfems.models;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by a653h496 on 4/21/16.
  */
 public class CategoryRealmObject extends RealmObject {
 
-
+    @PrimaryKey
     private  Integer id;
     private  String category_name;
 
@@ -32,5 +33,14 @@ public class CategoryRealmObject extends RealmObject {
 
     public String getCategory_name() {
         return category_name;
+    }
+
+
+    @Override
+    public String toString() {
+        return "CategoryRealmObject{" +
+                "id=" + id +
+                ", category_name='" + category_name + '\'' +
+                '}';
     }
 }

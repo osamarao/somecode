@@ -7,6 +7,6 @@ import java.util.List;
  */
 public interface MenuPopulator {
 
-    public void add(List<ProtocolTitleMenuItem> protocolTitleMenuItems);
-    public void add(ProtocolTitleMenuItem protocolTitleMenuItem);
+    public void add(List<CategoryTitleMenuItem> categoryTitleMenuItems);
+    public void add(CategoryTitleMenuItem categoryTitleMenuItem);
 }

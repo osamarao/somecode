@@ -48,14 +48,8 @@ public class SyncProtocolsService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // TODO Ongoing Notification to show stuffs happening
-
-
         nfemsService = NFEMSServiceFactory.getNFEMSService();
-
-
         getCategories();
-
-
     }
 
     private void getCategories() {
@@ -71,7 +65,7 @@ public class SyncProtocolsService extends IntentService {
                 }
 
                 realm.beginTransaction();
-                realm.copyToRealm(realmObjects);
+                realm.copyToRealmOrUpdate(realmObjects);
                 realm.commitTransaction();
 
                 getProtocols();
@@ -97,7 +91,7 @@ public class SyncProtocolsService extends IntentService {
                 }
 
                 realm.beginTransaction();
-                realm.copyToRealm(realmObjects);
+                realm.copyToRealmOrUpdate(realmObjects);
                 realm.commitTransaction();
 
                 // use Event Bus here

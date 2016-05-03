@@ -24,18 +24,20 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.Arrays;
 
 import io.clutchstud.nfems.R;
-import io.clutchstud.nfems.models.ProtocolRealmObject;
+import io.clutchstud.nfems.models.CategoryRealmObject;
 import io.clutchstud.nfems.services.SyncProtocolsService;
+import io.clutchstud.nfems.util.CategoryTitleMenuItem;
 import io.clutchstud.nfems.util.MenuPopulator;
 import io.clutchstud.nfems.util.NavigationSubMenuPopulator;
-import io.clutchstud.nfems.util.ProtocolTitleMenuItem;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopulatesMenu {
 
     private RealmConfiguration realmConfiguration;
+    private NavigationView navigationView;
+    private PopulateMenuStrategy populateMenuStrategy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         EventBus.getDefault().register(this);
-        gainPermission();
+        //gainPermission();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -52,20 +54,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
+        setPopulateMenuStrategy(new PopulateMenuFromDatabaseStrategy());
 
-        Menu m = navigationView.getMenu();
-        SubMenu topChannelMenu = m.addSubMenu("Top Channels");
-
-        MenuPopulator menuPopulator = new NavigationSubMenuPopulator(topChannelMenu);
-
-        menuPopulator.add(new ProtocolTitleMenuItem(Menu.NONE, 1, Menu.NONE, "Foo"));
-        menuPopulator.add(new ProtocolTitleMenuItem(Menu.NONE, 2, Menu.NONE, "Bar"));
-        menuPopulator.add(new ProtocolTitleMenuItem(Menu.NONE, 3, Menu.NONE, "Baz"));
-        menuPopulator.add(new ProtocolTitleMenuItem(Menu.NONE, 4, Menu.NONE, "Paz"));
+        populateMenuStrategy.populateMenu(this, navigationView);
 
 
     }
@@ -101,9 +96,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // We can now update the navigation
         Snackbar.make(this.findViewById(R.id.toolbar), "Sync Complete", Snackbar.LENGTH_SHORT).show();
         Realm.setDefaultConfiguration(new RealmConfiguration.Builder(this).build());
-        RealmResults<ProtocolRealmObject> protocols = Realm.getDefaultInstance().where(ProtocolRealmObject.class).findAll();
-        Log.d("handleSomething", Arrays.deepToString(protocols.toArray()));
+        RealmResults<CategoryRealmObject> categories = Realm.getDefaultInstance().where(CategoryRealmObject.class).findAll();
+        Log.d("handleSomething", Arrays.deepToString(categories.toArray()));
 
+        Menu m = navigationView.getMenu();
+        SubMenu topChannelMenu = m.addSubMenu("Categories");
+
+        MenuPopulator menuPopulator = new NavigationSubMenuPopulator(topChannelMenu);
+        for (CategoryRealmObject category : categories){
+            menuPopulator.add(new CategoryTitleMenuItem(Menu.NONE, category.getId(), Menu.NONE, category.getCategory_name()));
+        }
     }
 
     @Override
@@ -174,5 +176,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void setPopulateMenuStrategy(PopulateMenuStrategy populateMenuStrategy) {
+
+        this.populateMenuStrategy = populateMenuStrategy;
     }
 }

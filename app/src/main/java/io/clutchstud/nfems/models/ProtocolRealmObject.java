@@ -1,12 +1,13 @@
 package io.clutchstud.nfems.models;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by a653h496 on 4/21/16.
  */
 public class ProtocolRealmObject extends RealmObject {
-
+    @PrimaryKey
     private  Integer id;
     private  String htmlcontent;
     private  String title;

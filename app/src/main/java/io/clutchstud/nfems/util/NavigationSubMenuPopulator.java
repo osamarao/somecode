@@ -15,14 +15,14 @@ public class NavigationSubMenuPopulator implements MenuPopulator{
         this.subMenu = subMenu;
     }
     @Override
-    public void add(List<ProtocolTitleMenuItem> protocolTitleMenuItems){
-        for(ProtocolTitleMenuItem protocolTitleMenuItem : protocolTitleMenuItems){
-            subMenu.add(protocolTitleMenuItem.groupId, protocolTitleMenuItem.itemId, protocolTitleMenuItem.order, protocolTitleMenuItem.title);
+    public void add(List<CategoryTitleMenuItem> categoryTitleMenuItems){
+        for(CategoryTitleMenuItem categoryTitleMenuItem : categoryTitleMenuItems){
+            subMenu.add(categoryTitleMenuItem.groupId, categoryTitleMenuItem.itemId, categoryTitleMenuItem.order, categoryTitleMenuItem.title);
         }
     }
 
     @Override
-    public void add(ProtocolTitleMenuItem protocolTitleMenuItem) {
-        subMenu.add(protocolTitleMenuItem.groupId, protocolTitleMenuItem.itemId, protocolTitleMenuItem.order, protocolTitleMenuItem.title);
+    public void add(CategoryTitleMenuItem categoryTitleMenuItem) {
+        subMenu.add(categoryTitleMenuItem.groupId, categoryTitleMenuItem.itemId, categoryTitleMenuItem.order, categoryTitleMenuItem.title);
     }
 }
