@@ -1,13 +1,17 @@
 package io.clutchstud.nfems.services;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
+import io.clutchstud.nfems.R;
 import io.clutchstud.nfems.models.Category;
 import io.clutchstud.nfems.models.CategoryRealmObject;
 import io.clutchstud.nfems.models.Protocol;
@@ -25,10 +29,10 @@ import retrofit2.Response;
  */
 public class SyncProtocolsService extends IntentService {
 
-    private  NFEMSService nfemsService;
-    private  RealmConfiguration realmConfiguration;
-    private  Realm realm;
-
+    private NFEMSService nfemsService;
+    private RealmConfiguration realmConfiguration;
+    private Realm realm;
+    private NotificationManager mNotificationManager;
 
 
     public SyncProtocolsService() {
@@ -49,7 +53,22 @@ public class SyncProtocolsService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         // TODO Ongoing Notification to show stuffs happening
         nfemsService = NFEMSServiceFactory.getNFEMSService();
+        startNotification();
         getCategories();
+    }
+
+    private void startNotification() {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("NFEMS")
+                        .setOngoing(true)
+                        .setContentText("Syncing...");
+
+
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(890, mBuilder.build());
     }
 
     private void getCategories() {
@@ -73,7 +92,7 @@ public class SyncProtocolsService extends IntentService {
 
             @Override
             public void onFailure(Call<ArrayList<Category>> call, Throwable t) {
-                Log.e(this.getClass().getCanonicalName() + " getCategories Failure", t.getMessage());
+                Log.e(this.getClass().getCanonicalName() + " getCategories Failure", ""+t.getMessage());
             }
         });
     }
@@ -87,7 +106,6 @@ public class SyncProtocolsService extends IntentService {
                 realmConfiguration = new RealmConfiguration.Builder(SyncProtocolsService.this).build();
                 realm = Realm.getInstance(realmConfiguration);
                 for (Protocol category : response.body()) {
-                    Log.i("fetched proto", ""+category.getCategoryId());
                     realmObjects.add(new ProtocolRealmObject(category));
                 }
 
@@ -97,7 +115,7 @@ public class SyncProtocolsService extends IntentService {
 
                 // use Event Bus here
                 EventBus.getDefault().post(new SyncDoneEvent("Hello everyone!"));
-
+                mNotificationManager.cancel(890);
             }
 
             @Override
