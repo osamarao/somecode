@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import io.clutchstud.nfems.R;
-import io.clutchstud.nfems.adapters.ProtocolAdapter;
+import io.clutchstud.nfems.adapters.ProtocolListItemAdapter;
 import io.clutchstud.nfems.models.ProtocolRealmObject;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -39,14 +39,14 @@ public class ContentActivity extends AppCompatActivity {
                                                                 .where(ProtocolRealmObject.class)
                                                                 .equalTo("categoryId", getIntent().getIntExtra("catId", 0))
                                                                 .findAll();
-            final ProtocolAdapter protocolAdapter = new ProtocolAdapter(protocols);
+            final ProtocolListItemAdapter protocolAdapter = new ProtocolListItemAdapter(protocols);
 
 //            recyclerView.setHasFixedSize(true);
             recyclerView.setAdapter(protocolAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            protocolAdapter.setListener(new ProtocolAdapter.OnItemClickListener() {
+            protocolAdapter.setListener(new ProtocolListItemAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(ProtocolRealmObject protocolRealmObject) {
                     Log.d("protocol: " , protocolRealmObject.toString());

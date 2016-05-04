@@ -13,7 +13,7 @@ import io.realm.RealmResults;
 /**
  * Created by a653h496 on 5/4/16.
  */
-public class ProtocolAdapter extends RecyclerView.Adapter<ProtocolAdapter.ViewHolder> {
+public class ProtocolListItemAdapter extends RecyclerView.Adapter<ProtocolListItemAdapter.ViewHolder> {
 
 
     public interface OnItemClickListener {
@@ -26,7 +26,7 @@ public class ProtocolAdapter extends RecyclerView.Adapter<ProtocolAdapter.ViewHo
     private final RealmResults<ProtocolRealmObject> protocols;
 
     // Provide a suitable constructor (depends on the kind of data set)
-    public ProtocolAdapter(RealmResults<ProtocolRealmObject> protocols) {
+    public ProtocolListItemAdapter(RealmResults<ProtocolRealmObject> protocols) {
         this.protocols = protocols;
     }
 
@@ -53,7 +53,7 @@ public class ProtocolAdapter extends RecyclerView.Adapter<ProtocolAdapter.ViewHo
 
     // Create new views (invoked by the layout manager)
     @Override
-    public ProtocolAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProtocolListItemAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.protocol_item, parent, false);
         // set the view's size, margins, paddings and layout parameters        ...
