@@ -3,7 +3,6 @@ package io.clutchstud.nfems.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import io.clutchstud.nfems.R;
 import io.clutchstud.nfems.models.ProtocolRealmObject;
@@ -29,7 +28,7 @@ public class ProtocolDetailActivity extends AppCompatActivity {
 
         String summary = "<html><body>Placeholder <b>123</b> Places held.</body></html>";
 
-        webView.loadData(summary, "text/html", null);
-        Toast.makeText(this, ""+protocolRealmObjects.get(0).getHtmlcontent(), Toast.LENGTH_SHORT).show();
+        webView.loadData(protocolRealmObjects.get(0).getHtmlcontent(), "text/html", null);
+        //Toast.makeText(this, ""+protocolRealmObjects.get(0).getHtmlcontent(), Toast.LENGTH_SHORT).show();
     }
 }
