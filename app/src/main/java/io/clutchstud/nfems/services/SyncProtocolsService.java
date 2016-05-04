@@ -87,6 +87,7 @@ public class SyncProtocolsService extends IntentService {
                 realmConfiguration = new RealmConfiguration.Builder(SyncProtocolsService.this).build();
                 realm = Realm.getInstance(realmConfiguration);
                 for (Protocol category : response.body()) {
+                    Log.i("fetched proto", ""+category.getCategoryId());
                     realmObjects.add(new ProtocolRealmObject(category));
                 }
 

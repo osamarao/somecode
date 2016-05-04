@@ -12,11 +12,9 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <service
             android:name=".services.SyncProtocolsService"
             android:exported="false" />
-
 
         <activity
             android:name=".activities.MainActivity"
@@ -28,11 +26,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.ContentActivity"
             android:label="@string/title_activity_content"
             android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity android:name=".activities.ProtocolDetailActivity"
+            android:label="@string/title_activity_content"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
 
         </activity>
     </application>

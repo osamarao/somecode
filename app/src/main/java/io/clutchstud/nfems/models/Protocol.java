@@ -9,7 +9,7 @@ public class Protocol {
     private Integer id;
     private String title;
     private String htmlcontent;
-    private Integer categoryId;
+    private Integer category_id;
     private String createdAt;
     private String updatedAt;
 
@@ -43,11 +43,11 @@ public class Protocol {
     }
 
     public Integer getCategoryId() {
-        return categoryId;
+        return category_id;
     }
 
     public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+        this.category_id = categoryId;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class Protocol {
         return "Protocol{" +
                 "title='" + title + '\'' +
                 ", htmlcontent='" + htmlcontent + '\'' +
-                ", categoryId=" + categoryId +
+                ", categoryId=" + category_id +
                 '}';
     }
 
