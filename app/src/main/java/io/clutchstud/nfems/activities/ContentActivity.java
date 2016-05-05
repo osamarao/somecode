@@ -2,7 +2,6 @@ package io.clutchstud.nfems.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,17 +30,14 @@ public class ContentActivity extends AppCompatActivity {
 
 
         if (getIntent().hasExtra("catId")) {
-            Snackbar.make(this.findViewById(R.id.toolbar), "catId is : " + getIntent().getIntExtra("catId", 0), Snackbar.LENGTH_SHORT).show();
-
-
             Realm.setDefaultConfiguration(new RealmConfiguration.Builder(this).build());
             RealmResults<ProtocolRealmObject> protocols = Realm.getDefaultInstance()
-                                                                .where(ProtocolRealmObject.class)
-                                                                .equalTo("categoryId", getIntent().getIntExtra("catId", 0))
-                                                                .findAll();
+                    .where(ProtocolRealmObject.class)
+                    .equalTo("categoryId", getIntent().getIntExtra("catId", 0))
+                    .findAll();
             final ProtocolListItemAdapter protocolAdapter = new ProtocolListItemAdapter(protocols);
 
-//            recyclerView.setHasFixedSize(true);
+
             recyclerView.setAdapter(protocolAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -49,7 +45,7 @@ public class ContentActivity extends AppCompatActivity {
             protocolAdapter.setListener(new ProtocolListItemAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(ProtocolRealmObject protocolRealmObject) {
-                    Log.d("protocol: " , protocolRealmObject.toString());
+                    Log.d("protocol: ", protocolRealmObject.toString());
                     Intent protocolDetailIntent = new Intent(ContentActivity.this, ProtocolDetailActivity.class);
                     protocolDetailIntent.putExtra("protoId", protocolRealmObject.getId());
                     startActivity(protocolDetailIntent);

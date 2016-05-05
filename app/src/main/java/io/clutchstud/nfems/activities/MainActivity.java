@@ -1,6 +1,7 @@
 package io.clutchstud.nfems.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import io.clutchstud.nfems.R;
 import io.clutchstud.nfems.services.SyncProtocolsService;
+import io.clutchstud.nfems.util.AlarmHandlingUtility;
 import io.realm.RealmConfiguration;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopulatesMenu {
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-       // EventBus.getDefault().register(this);
+        // EventBus.getDefault().register(this);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -45,6 +47,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setPopulateMenuStrategy(new PopulateMenuFromDatabaseStrategy());
         populateMenuStrategy.populateMenu(this, navigationView);
+
+
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
+
+        if (prefs.getBoolean("firstrun", true)) {
+            // Do first run stuff here then set 'firstrun' as false
+            // using the following line to edit/commit prefs
+            // TODO Sync Protocols
+            startSyncProtocolsIntentService();
+            // TODO Arm Alarm
+
+            prefs.edit().putInt("syncInterValInHours", 24).apply();
+            AlarmHandlingUtility.setAlarm(this, prefs.getInt("syncInterValInHours", 24), new Intent(MainActivity.this, SyncProtocolsService.class));
+
+            prefs.edit().putBoolean("firstrun", false).apply();
+        }
+
+    }
+
+    private void startSyncProtocolsIntentService() {
+        Intent msgIntent = new Intent(MainActivity.this, SyncProtocolsService.class);
+        startService(msgIntent);
     }
 
     @Override
@@ -55,20 +79,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Subscribe
-    public void handleSyncDoneEvent(SyncProtocolsService.SyncDoneEvent event){
+    public void handleSyncDoneEvent(SyncProtocolsService.SyncDoneEvent event) {
         // We can now update the navigation
         Snackbar.make(this.findViewById(R.id.toolbar), "Sync Complete", Snackbar.LENGTH_SHORT).show();
-//        Realm.setDefaultConfiguration(new RealmConfiguration.Builder(this).build());
-//        RealmResults<CategoryRealmObject> categories = Realm.getDefaultInstance().where(CategoryRealmObject.class).findAll();
-//        Log.d("handleSomething", Arrays.deepToString(categories.toArray()));
-//
-//        Menu m = navigationView.getMenu();
-//        SubMenu topChannelMenu = m.addSubMenu("Categories");
-//
-//        MenuPopulator menuPopulator = new NavigationSubMenuPopulator(topChannelMenu);
-//        for (CategoryRealmObject category : categories){
-//            menuPopulator.add(new CategoryTitleMenuItem(Menu.NONE, category.getId(), Menu.NONE, category.getCategory_name()));
-//        }
+
 
         populateMenuStrategy.populateMenu(this, navigationView);
     }
@@ -99,14 +113,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Snackbar.make(this.findViewById(R.id.toolbar), "Feature not available", Snackbar.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
         if (id == R.id.action_sync_now) {
-//            Snackbar.make(this.findViewById(R.id.toolbar), "Feature not available", Snackbar.LENGTH_SHORT).show();
-            Intent msgIntent = new Intent(MainActivity.this, SyncProtocolsService.class);
-            startService(msgIntent);
+            startSyncProtocolsIntentService();
             return true;
         }
 
@@ -138,7 +152,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void setPopulateMenuStrategy(PopulateMenuStrategy populateMenuStrategy) {
-
         this.populateMenuStrategy = populateMenuStrategy;
     }
+
+
 }
